@@ -195,3 +195,109 @@ class Visualizer:
         if px_z: cv2.line(img, (cx, cy), px_z, (255, 0, 0), thickness)  # Blue (Z)
         
         cv2.circle(img, (cx, cy), 4, (0, 255, 255), -1)  # Yellow center
+    
+    def draw_hand_point(self, img, pose_world, camera_pose, color, label="", apply_calibration=True, radius=8):
+        """
+        Draws a single hand point (simplified skeleton) with label.
+        
+        Args:
+            img: Image to draw on
+            pose_world: Pose dict
+            camera_pose: Camera pose
+            color: BGR color tuple
+            label: Text label to display
+            apply_calibration: Whether to apply offsets
+            radius: Circle radius in pixels
+        """
+        # Apply calibration if requested
+        if apply_calibration:
+            pose_world = self.apply_offset(pose_world)
+        
+        point = self.project_point(pose_world['position'], camera_pose)
+        if point is None:
+            return
+        
+        x, y = point
+        
+        # Draw circle
+        cv2.circle(img, (x, y), radius, color, -1)
+        cv2.circle(img, (x, y), radius + 2, (255, 255, 255), 2)  # White outline
+        
+        # Draw label
+        if label:
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            font_scale = 0.5
+            thickness = 2
+            text_size = cv2.getTextSize(label, font, font_scale, thickness)[0]
+            text_x = x - text_size[0] // 2
+            text_y = y - radius - 10
+            
+            # Background for text
+            cv2.rectangle(img, 
+                         (text_x - 3, text_y - text_size[1] - 3),
+                         (text_x + text_size[0] + 3, text_y + 3),
+                         (0, 0, 0), -1)
+            cv2.putText(img, label, (text_x, text_y), font, font_scale, color, thickness)
+    
+    def draw_info_panel(self, img, frame_idx, total_frames, video_ts, raw_ts, synced_ts, temporal_offset, position_diff=None):
+        """
+        Draws information panel on the image.
+        
+        Args:
+            img: Image to draw on
+            frame_idx: Current frame index
+            total_frames: Total frame count
+            video_ts: Video timestamp
+            raw_ts: Raw motion timestamp
+            synced_ts: Synced motion timestamp  
+            temporal_offset: Time difference between raw and video
+            position_diff: Optional position difference in meters
+        """
+        panel_x = 10
+        panel_y = 10
+        line_height = 25
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        font_scale = 0.6
+        thickness = 2
+        color = (0, 255, 0)  # Green
+        
+        # Draw semi-transparent background
+        panel_height = line_height * (7 if position_diff else 6)
+        overlay = img.copy()
+        cv2.rectangle(overlay, (panel_x - 5, panel_y - 5), 
+                     (panel_x + 400, panel_y + panel_height), 
+                     (0, 0, 0), -1)
+        cv2.addWeighted(overlay, 0.6, img, 0.4, 0, img)
+        
+        y = panel_y + 20
+        cv2.putText(img, f"Frame: {frame_idx} / {total_frames}", 
+                   (panel_x, y), font, font_scale, color, thickness)
+        y += line_height
+        
+        cv2.putText(img, f"Video Time: {video_ts:.3f}s", 
+                   (panel_x, y), font, font_scale, color, thickness)
+        y += line_height
+        
+        cv2.putText(img, f"Raw Motion Time: {raw_ts:.3f}s", 
+                   (panel_x, y), font, font_scale, (128, 0, 128), thickness)  # Purple
+        y += line_height
+        
+        cv2.putText(img, f"Synced Motion Time: {synced_ts:.3f}s", 
+                   (panel_x, y), font, font_scale, (0, 255, 255), thickness)  # Yellow
+        y += line_height
+        
+        cv2.putText(img, f"Temporal Offset: {temporal_offset*1000:.1f}ms", 
+                   (panel_x, y), font, font_scale, color, thickness)
+        y += line_height
+        
+        if position_diff is not None:
+            cv2.putText(img, f"Position Diff: {position_diff*100:.2f}cm", 
+                       (panel_x, y), font, font_scale, color, thickness)
+            y += line_height
+        
+        # Legend
+        legend_y = img.shape[0] - 60
+        cv2.putText(img, "Purple = Raw (Nearest)", 
+                   (panel_x, legend_y), font, font_scale, (128, 0, 128), thickness)
+        cv2.putText(img, "Yellow = Synced (Interpolated)", 
+                   (panel_x, legend_y + 30), font, font_scale, (0, 255, 255), thickness)

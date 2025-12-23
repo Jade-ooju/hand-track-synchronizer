@@ -140,6 +140,31 @@ Edit `Scripts/run_visualization.py` to adjust:
 
 ---
 
+### Step 4: Raw vs Synced Comparison (Optional)
+Generate a comparison video showing both raw and interpolated poses:
+
+```bash
+python Scripts/compare_raw_synced.py
+```
+
+**What it does:**
+- Shows **raw pose** (purple) - nearest motion timestamp, no interpolation
+- Shows **synced pose** (yellow) - interpolated at exact video frame time
+- Displays info panel with timestamps and metrics
+- Demonstrates smoothness improvement from interpolation
+- Outputs to `data/raw/test_002/comparison_output.mp4`
+
+**Visualization:**
+- **Purple circle**: Raw nearest pose (jumpy)
+- **Yellow circle**: Synced interpolated pose (smooth)
+- **Info panel**: Shows temporal offset and position difference
+- **Legend**: Color coding explanation
+
+**Use case:**
+Use this to validate that interpolation is working correctly and to demonstrate quality improvement for presentations or debugging.
+
+---
+
 ## Project Structure
 
 ```
