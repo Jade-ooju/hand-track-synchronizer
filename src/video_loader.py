@@ -24,6 +24,12 @@ class VideoLoader:
             raise IOError(f"Could not open video file: {video_path}")
             
         logger.info(f"Successfully opened video: {video_path}")
+        
+        # Expose properties
+        self.fps = self.cap.get(cv2.CAP_PROP_FPS)
+        self.width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        self.height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        self.total_frames = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
     def get_metadata(self):
         """

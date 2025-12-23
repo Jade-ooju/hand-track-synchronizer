@@ -17,6 +17,8 @@ class MotionLoader:
         self.json_path = json_path
         self.timestamps = []
         self.poses = []
+        self.left_eye_poses = []
+        self.right_eye_poses = []
         
         if os.path.isdir(json_path):
             self.load_directory(json_path)
@@ -47,10 +49,17 @@ class MotionLoader:
         # Sort combined data
         if self.timestamps:
              # Zip, sort, unzip
-            combined = sorted(zip(self.timestamps, self.poses), key=lambda x: x[0])
-            self.timestamps, self.poses = zip(*combined)
+             # Combine all lists that need sorting
+            combined = sorted(zip(self.timestamps, self.poses, self.left_eye_poses, self.right_eye_poses), key=lambda x: x[0])
+            
+            # Unzip
+            self.timestamps, self.poses, self.left_eye_poses, self.right_eye_poses = zip(*combined)
+            
+            # Convert back to lists
             self.timestamps = list(self.timestamps)
             self.poses = list(self.poses)
+            self.left_eye_poses = list(self.left_eye_poses)
+            self.right_eye_poses = list(self.right_eye_poses)
             
         logger.info(f"Total poses loaded: {len(self.poses)}")
 
@@ -97,20 +106,56 @@ class MotionLoader:
                 }
                 current_poses.append(pose_dict)
             
+            # Process Eye Poses if available
+            raw_left = trajectory.get('left_eye_poses', [])
+            raw_right = trajectory.get('right_eye_poses', [])
+            
+            current_left = []
+            for p in raw_left:
+                 current_left.append({
+                    "position": p[0:3] if len(p)>=3 else [0,0,0],
+                    "rotation": p[3:7] if len(p)>=7 else [0,0,0,1]
+                 })
+                 
+            current_right = []
+            for p in raw_right:
+                 current_right.append({
+                     "position": p[0:3] if len(p)>=3 else [0,0,0],
+                     "rotation": p[3:7] if len(p)>=7 else [0,0,0,1]
+                 })
+
+            # Pad eye poses if they are shorter than timestamps (though they should match)
+            # Actually, standardizing on minimal length is safer
+            min_len = min(len(current_timestamps), len(current_poses), len(current_left), len(current_right))
+            if len(current_left) != len(current_timestamps):
+                 # logger.warning(f"Eye pose count mismatch. Truncating to {min_len}")
+                 pass
+            
+            current_timestamps = current_timestamps[:min_len]
+            current_poses = current_poses[:min_len]
+            current_left = current_left[:min_len]
+            current_right = current_right[:min_len]
+            
             if merge:
                 self.timestamps.extend(current_timestamps)
                 self.poses.extend(current_poses)
+                self.left_eye_poses.extend(current_left)
+                self.right_eye_poses.extend(current_right)
             else:
                 self.timestamps = current_timestamps
                 self.poses = current_poses
+                self.left_eye_poses = current_left
+                self.right_eye_poses = current_right
                 
                 # Check monotonicity only if not merging (merging sorts at the end)
                 if not all(self.timestamps[i] <= self.timestamps[i+1] for i in range(len(self.timestamps)-1)):
                     logger.warning("Timestamps are not strictly sorted. Sorting now.")
-                    combined = sorted(zip(self.timestamps, self.poses), key=lambda x: x[0])
-                    self.timestamps, self.poses = zip(*combined)
+                    combined = sorted(zip(self.timestamps, self.poses, self.left_eye_poses, self.right_eye_poses), key=lambda x: x[0])
+                    self.timestamps, self.poses, self.left_eye_poses, self.right_eye_poses = zip(*combined)
                     self.timestamps = list(self.timestamps)
                     self.poses = list(self.poses)
+                    self.left_eye_poses = list(self.left_eye_poses)
+                    self.right_eye_poses = list(self.right_eye_poses)
                     
             if not merge:
                 logger.info(f"Loaded {len(self.poses)} poses.")
@@ -167,7 +212,11 @@ class MotionLoader:
         if best_idx != -1:
             if tolerance > 0 and min_diff > tolerance:
                 return None
-            return self.poses[best_idx]
+            return {
+                "pose": self.poses[best_idx],
+                "left_eye": self.left_eye_poses[best_idx] if best_idx < len(self.left_eye_poses) else None,
+                "right_eye": self.right_eye_poses[best_idx] if best_idx < len(self.right_eye_poses) else None
+            }
             
         return None
 
@@ -199,15 +248,28 @@ class MotionLoader:
             # But strictly speaking, "surrounding" implies t_i <= t <= t_{i+1}
             # Let's return the interval [t_{idx}, t_{idx+1}] if exists, or [t_{idx-1}, t_{idx}]?
             # Standard: return lower and upper bound.
-            curr = (self.timestamps[idx], self.poses[idx])
+            # Standard: return lower and upper bound.
+            curr = (self.timestamps[idx], {
+                "pose": self.poses[idx],
+                "left_eye": self.left_eye_poses[idx],
+                "right_eye": self.right_eye_poses[idx]
+            })
             return curr, curr
 
         # If we are here, timestamp < self.timestamps[idx] (if idx valid)
         
         if idx < len(self.timestamps):
-            next_data = (self.timestamps[idx], self.poses[idx])
+            next_data = (self.timestamps[idx], {
+                "pose": self.poses[idx],
+                "left_eye": self.left_eye_poses[idx],
+                "right_eye": self.right_eye_poses[idx]
+            })
         
         if idx > 0:
-            prev_data = (self.timestamps[idx-1], self.poses[idx-1])
+            prev_data = (self.timestamps[idx-1], {
+                "pose": self.poses[idx-1],
+                "left_eye": self.left_eye_poses[idx-1],
+                "right_eye": self.right_eye_poses[idx-1]
+            })
             
         return prev_data, next_data
