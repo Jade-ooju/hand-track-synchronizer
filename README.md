@@ -13,3 +13,27 @@ This project aims to rebuild a video-motion synchronization system to align egoc
 
 ## Usage
 (Instructions to be added)
+
+## Setup
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/Jade-ooju/hand-track-synchronizer.git
+    cd hand-track-synchronizer
+    ```
+
+2.  **Create and activate a virtual environment:**
+    ```bash
+    python -m venv venv
+    # Windows
+    .\venv\Scripts\activate
+    # Linux/Mac
+    source venv/bin/activate
+    ```
+
+3.  **Install dependencies:**
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+4.  **Configuration:**
+    Modify `config/config.json` to point to your data paths.

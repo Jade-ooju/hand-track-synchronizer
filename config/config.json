@@ -1,0 +1,13 @@
+{
+    "video_path": "data/raw/video.mp4",
+    "motion_log_path": "data/raw/motion.json",
+    "output_dir": "data/synced",
+    "calibration": {
+        "time_offset_ms": 0,
+        "projection_matrix": []
+    },
+    "logging": {
+        "level": "INFO",
+        "file": "pipeline.log"
+    }
+}
