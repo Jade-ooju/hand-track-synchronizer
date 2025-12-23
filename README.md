@@ -5,6 +5,8 @@ A pipeline for frame-accurate synchronization of egocentric video with 3D hand p
 ## Description
 This project aims to rebuild a video-motion synchronization system to align egocentric video frames with 3D hand pose motion data (JSON logs), creating frame-accurate synchronized datasets for training.
 
+For detailed project context and development guidelines, please refer to [docs/project_guidelines.md](docs/project_guidelines.md).
+
 ## Features
 - Extract precise frame timestamps from video
 - Match and interpolate 3D hand poses to video timelines
