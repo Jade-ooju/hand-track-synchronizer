@@ -1,0 +1,14 @@
+{
+    "video_path": "data/raw/test_002/MR_View.mp4",
+    "motion_dir": "data/raw/test_002",
+    "output_dir": "data/synced/test_002",
+    "calibration_path": "config/calibration.json",
+    "timestamp_offset": 1766488163.738,
+    "options": {
+        "generate_visualization": true,
+        "visualization_type": "gizmo",
+        "gap_threshold": 0.2,
+        "export_synced_json": true,
+        "generate_report": true
+    }
+}

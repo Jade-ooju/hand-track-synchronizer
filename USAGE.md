@@ -27,6 +27,43 @@ data/raw/test_002/
 
 ## Pipeline Workflow
 
+### Recommended: Full Pipeline Orchestrator
+The easiest way to process your data is using the full pipeline orchestrator:
+
+```bash
+python Scripts/run_full_pipeline.py
+```
+
+This single command will:
+1. ✓ Validate calibration (interactive prompt)
+2. ✓ Load video and motion data
+3. ✓ Match and interpolate poses
+4. ✓ Generate visualization
+5. ✓ Export synced dataset JSON
+6. ✓ Create processing report
+
+**Output** (`data/synced/test_002/`):
+- `synced_poses.json` - Per-frame synchronized pose data
+- `viz_gizmo.mp4` - Visualization video
+- `processing_report.md` - Processing summary
+
+**Options:**
+```bash
+# Skip calibration prompt (use existing)
+python Scripts/run_full_pipeline.py --skip-calib-check
+
+# Force recalibration before processing
+python Scripts/run_full_pipeline.py --recalibrate
+
+# Custom config
+python Scripts/run_full_pipeline.py --config my_config.json
+```
+
+---
+
+### Manual Step-by-Step (Advanced)
+For more control, run individual pipeline stages:
+
 ### Step 1: Video Cropping (Optional)
 If you have a single long video with multiple motion recording sessions:
 
