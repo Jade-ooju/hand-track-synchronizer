@@ -18,6 +18,7 @@ from src.motion_loader import MotionLoader
 from src.motion_matcher import MotionMatcher
 from src.interpolator import Interpolator
 from src.visualizer import Visualizer
+from src.compression_service import CompressionService
 
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 logger = logging.getLogger("Pipeline")
@@ -109,6 +110,18 @@ def run_pipeline(config_path, skip_calib_check=False, force_recalibrate=False):
     
     # Stage 1: Data Loading
     logger.info("Stage 1: Loading Data...")
+    
+    # Check for compressed version of the video
+    use_compressed = options.get('use_compressed', True)
+    if use_compressed:
+        video_path_obj = Path(video_path)
+        compressed_path = video_path_obj.with_name(f"{video_path_obj.stem}_compressed.mp4")
+        if compressed_path.exists():
+            logger.info(f"  Found compressed video: {compressed_path}")
+            video_path = str(compressed_path)
+        else:
+            logger.info(f"  No compressed video found at {compressed_path}, using original.")
+            
     v_loader = VideoLoader(video_path)
     m_loader = MotionLoader(motion_dir)
     
