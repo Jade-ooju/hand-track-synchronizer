@@ -1,0 +1,16 @@
+{
+    "video_path": "data/raw/Utensil/Utensil_Retake_001.mp4",
+    "motion_dir": "data/raw/Utensil",
+    "output_dir": "data/synced/Utensil",
+    "calibration_path": "config/calibration.json",
+    "timestamp_offset": 1767431293.0344615,
+    "options": {
+        "generate_visualization": true,
+        "visualization_type": "gizmo",
+        "gap_threshold": 0.2,
+        "export_synced_json": true,
+        "generate_report": true,
+        "use_compressed": false
+    }
+}
+
