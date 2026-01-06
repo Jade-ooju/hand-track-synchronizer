@@ -31,9 +31,8 @@ python Scripts/run_visualization.py
 
 ## Documentation
 
+- **[DATA_STRUCTURE.md](DATA_STRUCTURE.md)** - Where to place video files and motion data
 - **[USAGE.md](USAGE.md)** - Complete pipeline guide with step-by-step instructions
-- **[docs/project_guidelines.md](docs/project_guidelines.md)** - Development guidelines
-- **[docs/video_cropping_report.md](docs/video_cropping_report.md)** - Video cropping methodology
 
 ## Usage
 📖 **For detailed usage instructions, see [USAGE.md](USAGE.md)**
@@ -53,5 +52,14 @@ python Scripts/run_visualization.py
     pip install -r requirements.txt
     ```
 
-4.  **Configuration:**
-    Modify `config/config.json` to point to your data paths.
+4.  **Data Setup:**
+    Create the data directory structure and place your files. See **[DATA_STRUCTURE.md](DATA_STRUCTURE.md)** for details.
+    
+    **Quick setup:**
+    ```bash
+    mkdir -p data/raw/your_dataset
+    # Copy your video and JSON files to data/raw/your_dataset/
+    ```
+
+5.  **Configuration:**
+    Modify `config/pipeline_config.json` to point to your data paths.
