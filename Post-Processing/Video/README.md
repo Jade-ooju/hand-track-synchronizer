@@ -14,8 +14,6 @@ This project aims to rebuild a video-motion synchronization system to- **Video L
 
 ### 1. Installation
 ```bash
-git clone https://github.com/Jade-ooju/hand-track-synchronizer.git
-cd hand-track-synchronizer
 pip install -r requirements.txt
 ```
 
@@ -41,13 +39,7 @@ python Scripts/run_visualization.py
 📖 **For detailed usage instructions, see [USAGE.md](USAGE.md)**
 
 ## Setup
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/Jade-ooju/hand-track-synchronizer.git
-    cd hand-track-synchronizer
-    ```
-
-2.  **Create and activate a virtual environment:**
+1.  **Create and activate a virtual environment:**
     ```bash
     python -m venv venv
     # Windows

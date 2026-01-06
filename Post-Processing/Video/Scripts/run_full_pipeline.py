@@ -298,7 +298,7 @@ def generate_report(report_path, config, synced_frames, gaps_detected):
     frames_with_pose = sum(1 for f in synced_frames if f['hand_pose'] is not None)
     frames_in_gap = sum(1 for f in synced_frames if f['in_gap'])
     
-    report = f"""# VideoSync Processing Report
+    report = f"""# Video Processing Pipeline Report
 
 ## Processing Information
 - **Date**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
@@ -335,7 +335,7 @@ def generate_report(report_path, config, synced_frames, gaps_detected):
         f.write(report)
 
 def main():
-    parser = argparse.ArgumentParser(description='VideoSync Full Pipeline Orchestrator')
+    parser = argparse.ArgumentParser(description='Video Processing Full Pipeline Orchestrator')
     parser.add_argument('--config', default=str(PROJECT_ROOT / 'config' / 'pipeline_config.json'),
                        help='Path to pipeline configuration file')
     parser.add_argument('--skip-calib-check', action='store_true',

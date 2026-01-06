@@ -1,16 +1,12 @@
-# VideoSync Pipeline - Usage Guide
+# Video Processing Pipeline - Usage Guide
 
 ## Overview
-VideoSync synchronizes 3D hand pose data with MR video recordings, enabling precise temporal and spatial alignment for analysis and visualization.
+This pipeline synchronizes 3D hand pose data with MR video recordings, enabling precise temporal and spatial alignment for analysis and visualization.
 
 ## Quick Start
 
 ### 1. Setup
 ```bash
-# Clone repository
-git clone https://github.com/Jade-ooju/hand-track-synchronizer.git
-cd hand-track-synchronizer
-
 # Install dependencies
 pip install -r requirements.txt
 ```
@@ -205,7 +201,7 @@ Use this to validate that interpolation is working correctly and to demonstrate 
 ## Project Structure
 
 ```
-VideoSync/
+.
 ├── config/
 │   ├── config.json              # General configuration (legacy)
 │   └── calibration.json         # Projection calibration parameters
@@ -216,9 +212,6 @@ VideoSync/
 │           ├── *.json           # Motion data files
 │           ├── cropped/         # Cropped video clips
 │           └── viz_output.mp4   # Visualization output
-├── docs/
-│   ├── project_guidelines.md
-│   └── video_cropping_report.md
 ├── Scripts/
 │   ├── run_video_cropping.py   # Step 1: Video cropping
 │   ├── calibrate_projection.py # Step 2: Interactive calibration
@@ -230,8 +223,6 @@ VideoSync/
 │   ├── interpolator.py          # Pose interpolation (Slerp)
 │   ├── visualizer.py            # 3D-to-2D projection
 │   └── video_cropper.py         # Video splitting
-├── tests/
-│   └── ...                      # Unit tests
 └── requirements.txt
 ```
 
